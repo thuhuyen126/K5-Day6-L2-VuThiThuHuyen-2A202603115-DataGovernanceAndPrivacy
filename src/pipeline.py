@@ -28,16 +28,94 @@ from .metrics.tracks import get_track
 
 # ---------------------------------------------------------------- 01 load
 def load(ctx: RunContext) -> dict:
-    manifest = ctx.input_dir / "manifest.csv"
-    problems = verify_manifest(manifest) if manifest.exists() else [{"problem": "no_manifest"}]
+    """Load T02 metadata and verify input provenance."""
+
+    # 1. Verify data provenance using manifest.csv
+    manifest_path = ctx.input_dir / "manifest.csv"
+
+    problems = (
+        verify_manifest(manifest_path)
+        if manifest_path.exists()
+        else [{"problem": "no_manifest"}]
+    )
+
     if problems:
-        ctx.audit.log(actor="pipeline", action="provenance_problems", item_id=str(manifest), after=problems[:20])
+        ctx.audit.log(
+            actor="pipeline",
+            action="provenance_problems",
+            item_id=str(manifest_path),
+            after=problems[:20],
+        )
+
         if ctx.config.get("strict_provenance", True):
-            raise ValueError(f"provenance check failed ({len(problems)} problems), first: {problems[:3]}")
-    data = {"manifest": pd.read_csv(manifest) if manifest.exists() else None}
-    # TODO: load the tables/images your track needs, e.g.
-    # data["images"] = pd.read_csv(ctx.input_dir / "images.csv")
-    return data
+            raise ValueError(
+                f"provenance check failed ({len(problems)} problems), "
+                f"first: {problems[:3]}"
+            )
+
+    # 2. Load manifest
+    manifest = (
+        pd.read_csv(manifest_path)
+        if manifest_path.exists()
+        else None
+    )
+
+    # 3. Load image metadata
+    images_path = ctx.input_dir / "images.csv"
+
+    if not images_path.exists():
+        raise FileNotFoundError(
+            f"Missing images.csv: {images_path}"
+        )
+
+    images = pd.read_csv(images_path)
+
+    # 4. Validate required columns
+    required_columns = [
+        "image_id",
+        "path",
+        "camera_id",
+        "light",
+        "split",
+    ]
+
+    missing_columns = [
+        col for col in required_columns
+        if col not in images.columns
+    ]
+
+    if missing_columns:
+        raise ValueError(
+            f"images.csv is missing columns: {missing_columns}"
+        )
+
+    # 5. Validate image IDs
+    if images["image_id"].isna().any():
+        raise ValueError("images.csv contains missing image_id")
+
+    if images["image_id"].duplicated().any():
+        raise ValueError("images.csv contains duplicate image_id")
+
+    # 6. Validate image paths
+    missing_images = []
+
+    for relative_path in images["path"]:
+        image_path = ctx.input_dir / str(relative_path)
+
+        if not image_path.is_file():
+            missing_images.append(str(image_path))
+
+    if missing_images:
+        raise FileNotFoundError(
+            f"Missing {len(missing_images)} image files. "
+            f"First missing files: {missing_images[:5]}"
+        )
+
+    # 7. Return loaded data
+    return {
+        "manifest": manifest,
+        "images": images,
+    }
 
 
 # ---------------------------------------------------------------- 02 process
