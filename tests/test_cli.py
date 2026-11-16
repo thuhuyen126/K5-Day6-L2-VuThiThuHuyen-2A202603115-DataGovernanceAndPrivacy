@@ -14,11 +14,42 @@ from src.common.gt_guard import GroundTruthAccessError, disable_gt_guard, enable
 from src.common.offline import NetworkBlockedError, disable_offline_guard, enable_offline_guard
 
 
-def test_template_pipeline_fails_clearly_not_silently(tmp_path):
+def test_t02_pipeline_end_to_end(tmp_path):
     rc = runner.main(["--track", "t02", "--output", str(tmp_path), "--offline"])
-    assert rc == 3                                   # NotImplemented -> explicit exit code
+
+    assert rc == 0
+
+    expected_files = [
+        "ranked_review.csv",
+        "review_queue.csv",
+        "contact_sheet.html",
+        "decision.json",
+        "decision_log.csv",
+        "run_info.json",
+    ]
+
+    for filename in expected_files:
+        assert (tmp_path / filename).exists(), f"Missing output: {filename}"
+
+    pred = pd.read_csv(tmp_path / "ranked_review.csv")
+    queue = pd.read_csv(tmp_path / "review_queue.csv")
     info = json.loads((tmp_path / "run_info.json").read_text())
-    assert info["status"] == 3 and info["seed"] == 42
+
+    # Prediction contract
+    assert {"image_id", "score"}.issubset(pred.columns)
+    assert len(pred) == 96
+    assert pred["image_id"].nunique() == 96
+    assert pred["score"].notna().all()
+    assert pred["score"].between(0, 1).all()
+
+    # Review budget and ranking
+    assert len(queue) == 20
+    assert queue["item_id"].nunique() == 20
+    assert queue["score"].is_monotonic_decreasing
+
+    # Run metadata
+    assert info["status"] == 0
+    assert info["seed"] == 42
 
 
 def _run_baseline(out):

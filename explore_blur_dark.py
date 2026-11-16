@@ -41,6 +41,21 @@ for row in dev_images.itertuples(index=False):
 
 df = pd.DataFrame(results)
 
+# Export Dark V1 scores for development and pipeline integration
+dark_v1 = df[["image_id", "dark_score"]].rename(
+    columns={"dark_score": "score"}
+)
+
+output_dir = Path("out/dev")
+output_dir.mkdir(parents=True, exist_ok=True)
+
+output_file = output_dir / "dark_v1.csv"
+dark_v1.to_csv(output_file, index=False)
+
+print(f"\nDark V1 predictions saved: {output_file}")
+print(f"Number of predictions: {len(dark_v1)}")
+print(dark_v1.head().to_string(index=False))
+
 print("\n===== DEV DARK SCORE DISTRIBUTION =====")
 print(
     df["dark_score"]
@@ -129,3 +144,44 @@ output_path = render_contact_sheet(
 
 print(f"\nContact sheet created: {output_path}")
 print(f"Number of images for review: {len(review_df)}")
+
+# Compare dark scores with human review decisions
+reviewed = pd.read_csv(
+    Path("reports/review_queue_reviewed.csv")
+)
+
+review_comparison = df.merge(
+    reviewed[
+        ["item_id", "reviewer_decision", "review_note"]
+    ],
+    left_on="image_id",
+    right_on="item_id",
+    how="inner",
+)
+
+print("\n===== DARK SCORE VS HUMAN REVIEW =====")
+print(
+    review_comparison[
+        [
+            "image_id",
+            "camera_id",
+            "light",
+            "frac_dark",
+            "brightness",
+            "dark_score",
+            "reviewer_decision",
+        ]
+    ]
+    .sort_values("dark_score", ascending=False)
+    .round(3)
+    .to_string(index=False)
+)
+
+print("\n===== MEAN DARK SCORE BY REVIEW DECISION =====")
+print(
+    review_comparison.groupby("reviewer_decision")[
+        "dark_score"
+    ]
+    .agg(["count", "mean", "median", "max"])
+    .round(3)
+)

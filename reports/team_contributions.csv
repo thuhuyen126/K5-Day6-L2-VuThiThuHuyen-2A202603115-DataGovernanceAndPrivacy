@@ -1,6 +1,3 @@
 member,git_author_name,git_email,role,modules_files,commit_shas,evidence_note,presenter
-Member 1,,,Lead / Integrator,src/main.py; configs/,,,
-Member 2,,,Data & fixtures,fixtures/; tools/,,,
-Member 3,,,Core algorithm,src/pipeline.py,,,
-Member 4,,,QA / metric,tests/; reports/metrics_*.json,,,
-Member 5,,,Human review + report,reports/group_report.md; demo/,,,
+Member 1,VuThiThuHuyen,vuthithuhuyen126204@gmail.com,Data Processing & Algorithm (50%),"src/pipeline.py; src/common/image_ops.py; configs/tracks/t02.yaml; out/baseline/","[COMMIT_SHA_1]","Data structure and metadata inspection; load() implementation; Blur and Dark features; baseline execution; top-20 ranking verification; algorithm and methodology documentation",Yes
+Member 2,TranDucHoa,hoa06090204@gmail.com,Quality Analysis & Pipeline Governance (50%),"src/poc_pipeline.py; src/pipeline.py; src/common/review.py; src/common/decision.py; out/baseline/review_queue_reviewed.csv; out/poc/review_queue_reviewed.csv; reports/group_report.md","[COMMIT_SHA_2]","Manifest and provenance verification; Glare feature implementation; Human Review and audit analysis; review() and decide() policy; Baseline vs PoC comparison; Data Governance and limitations documentation",Yes

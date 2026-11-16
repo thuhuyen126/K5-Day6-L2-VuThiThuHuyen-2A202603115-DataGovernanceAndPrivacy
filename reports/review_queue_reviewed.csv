@@ -1,0 +1,11 @@
+rank,item_id,score,reason,suggested_action,slice,evidence_path,reviewer,reviewer_decision,override_value,review_note,reviewed_at
+1,img_08_3,0.9369270833333333,High darkness suspicion,human_review,cam_A/dusk,images/img_08_3.jpg,Vu Thi Thu Huyen,approve,,Severe darkness; objects difficult to inspect,2026-11-16T02:38:31.629Z
+2,img_12_3,0.8975868055555556,High darkness suspicion,human_review,cam_B/dusk,images/img_12_3.jpg,Vu Thi Thu Huyen,approve,,Very dark scene; visibility is limited,2026-11-16T02:38:31.629Z
+3,img_02_3,0.6488834531164577,High darkness suspicion,human_review,cam_A/day,images/img_02_3.jpg,Vu Thi Thu Huyen,escalate,,Dark foreground; main objects remain visible,2026-11-16T02:38:31.629Z
+4,img_20_2,0.6443629881999432,High darkness suspicion,human_review,cam_A/day,images/img_20_2.jpg,Vu Thi Thu Huyen,escalate,,Dark regions but vehicles remain identifiable,2026-11-16T02:38:31.629Z
+5,img_10_3,0.6241872324586935,High darkness suspicion,human_review,cam_A/day,images/img_10_3.jpg,Vu Thi Thu Huyen,escalate,,Dark foreground; further quality review needed,2026-11-16T02:38:31.629Z
+6,img_07_2,0.580191646595796,High darkness suspicion,human_review,cam_A/day,images/img_07_2.jpg,Vu Thi Thu Huyen,escalate,,Dark regions may reflect scene composition,2026-11-16T02:38:31.629Z
+7,img_18_0,0.4603107120257158,High darkness suspicion,human_review,cam_B/night,images/img_18_0.jpg,Vu Thi Thu Huyen,reject,,Night scene; important objects remain visible,2026-11-16T02:38:31.629Z
+8,img_18_1,0.4633432563716529,High darkness suspicion,human_review,cam_B/night,images/img_18_1.jpg,Vu Thi Thu Huyen,reject,,Night scene; objects remain clearly visible,2026-11-16T02:38:31.629Z
+9,img_18_2,0.4422344802373495,High darkness suspicion,human_review,cam_B/night,images/img_18_2.jpg,Vu Thi Thu Huyen,reject,,Night scene; vehicles and pedestrian remain visible,2026-11-16T02:38:31.629Z
+10,img_18_3,0.4221128189624884,High darkness suspicion,human_review,cam_B/night,images/img_18_3.jpg,Vu Thi Thu Huyen,escalate,,Strong blur; darkness cannot be assessed independently,2026-11-16T02:38:31.629Z
